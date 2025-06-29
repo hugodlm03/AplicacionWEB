@@ -32,15 +32,14 @@ modelos **XGBoost** en los clientes con una **Red Neuronal Convolucional (CNN)**
 """)
 
 #  Rutas a los archivos de resultados 
-project_root = Path(__file__).parent
+project_root = Path(__file__).parent.parent
 xgb_results_path = project_root / "Resultados" / "XGBllr"
 modelos_xgb_path = project_root / "Modelos" / "XGBllr"
 
 # PESTAÑAS 
-tab1, tab2, tab3 = st.tabs([
+tab1, tab2 = st.tabs([
     "📊 Modelo Centralizado (Línea Base)",
     "🌐 Modelo Federado (XGBllr)",
-    "🧠 Interpretación de Modelos"
 ])
 
 # MODELO CENTRALIZADO 
@@ -110,52 +109,3 @@ with tab2:
         st.plotly_chart(fig_convergencia, use_container_width=True)
         st.success(f"El mejor modelo federado se obtuvo en la **ronda {best_round_num}** con un **RMSE de {best_round_rmse:.2f}**.")
         st.info("Se observa la clásica curva de aprendizaje federado: un error muy alto al principio que desciende drásticamente en las primeras rondas hasta estabilizarse.")
-# INTERPRETACIÓN DEL MODELO (VERSIÓN PULIDA FINAL)
-with tab3:
-    st.header("Interpretación de los Modelos")
-    st.markdown("Analizamos los componentes de los modelos para entender qué han aprendido.")
-
-    #  ANÁLISIS DE LA CNN (SIN CAMBIOS) 
-    st.subheader("Análisis de la Red de Agregación (CNN)")
-    st.markdown("Visualizamos los pesos de los filtros de la CNN para intuir a qué patrones presta más atención el servidor.")
-    try:
-        cnn_path = modelos_xgb_path / "Global" / "cnns" / "cnn_global_round_85.pt"
-        state_dict = torch.load(cnn_path, map_location=torch.device('cpu'))
-        weights = state_dict['conv1d.weight'].numpy()
-        
-        fig_cnn_weights = px.imshow(weights[0], aspect="auto",
-                                    title="Mapa de Calor de los Pesos del Primer Filtro de la CNN (Ronda 85)",
-                                    labels=dict(x="Dimensión del Embedding", y="Canales de Entrada", color="Peso"))
-        st.plotly_chart(fig_cnn_weights, use_container_width=True)
-
-    except (FileNotFoundError, KeyError) as e:
-        st.warning(f"No se pudo cargar el modelo de la CNN para visualizar los pesos. Detalle: {e}")
-    except Exception as e:
-        st.error(f"Ocurrió un error inesperado al cargar el modelo CNN: {e}")
-
-    st.divider()
-
-    #  VISUALIZACIÓN DE UN ÁRBOL FEDERADO REAL (MEJORADO) 
-    st.subheader("Visualización de un Árbol Federado Real (Ronda 85)")
-    st.markdown("Cargamos un árbol individual del modelo global agregado en la ronda 85 para inspeccionar su estructura de reglas.")
-    
-    nombre_del_arbol_json = "esemble_global_r85.json"
-    
-    try:
-        tree_path = modelos_xgb_path / "Global" / "trees" / nombre_del_arbol_json
-        
-        if not tree_path.is_file():
-            st.error(f"¡Archivo no encontrado! No existe ningún archivo en la ruta '{tree_path}'.")
-            st.warning("Por favor, abre el código y modifica la variable 'nombre_del_arbol_json' con el nombre de un archivo que sí tengas.")
-        else:
-            # Mensaje de éxito eliminado para una interfaz más limpia
-            bst = xgb.Booster()
-            bst.load_model(str(tree_path))
-            
-            fig, ax = plt.subplots(figsize=(40, 15)) # Ajustamos el tamaño para un layout horizontal
-            xgb.plot_tree(bst, num_trees=0, ax=ax, rankdir='LR')
-            
-            st.pyplot(fig)
-
-    except Exception as e:
-        st.error(f"Ocurrió un error al cargar o visualizar el árbol de XGBoost: {e}")
