@@ -1,0 +1,11 @@
+streamlit
+pandas
+Pillow
+plotly
+openpyxl
+scikit-learn
+joblib
+matplotlib
+xgboost
+torch
+graphviz
