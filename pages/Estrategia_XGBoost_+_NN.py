@@ -137,9 +137,9 @@ with tab3:
 
     #  VISUALIZACIÓN DE UN ÁRBOL FEDERADO REAL (MEJORADO) 
     st.subheader("Visualización de un Árbol Federado Real (Ronda 85)")
-    st.markdown("Cargamos un árbol individual (del cliente 0) del modelo global agregado en la ronda 85 para inspeccionar su estructura de reglas.")
+    st.markdown("Cargamos un árbol individual del modelo global agregado en la ronda 85 para inspeccionar su estructura de reglas.")
     
-    nombre_del_arbol_json = "tree_agg_client_0_r85.json"
+    nombre_del_arbol_json = "esemble_global_r85.json"
     
     try:
         tree_path = modelos_xgb_path / "Global" / "trees" / nombre_del_arbol_json

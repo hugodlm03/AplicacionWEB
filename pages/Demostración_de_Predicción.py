@@ -54,7 +54,7 @@ def load_xgb_global(client_id: str):
     if not m:
         raise ValueError(f"client_id inválido: {client_id}")
     num = m.group(0)
-    path = XGB_MODELS_PATH / "Global" / "trees" / f"tree_agg_client_{num}_r85.json"
+    path = XGB_MODELS_PATH / "Global" / "trees" / f"esemble_global_r85.json"
     bst  = xgb.Booster()
     bst.load_model(str(path))
     return bst
