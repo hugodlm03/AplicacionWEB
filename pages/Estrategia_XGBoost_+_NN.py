@@ -32,7 +32,7 @@ modelos **XGBoost** en los clientes con una **Red Neuronal Convolucional (CNN)**
 """)
 
 #  Rutas a los archivos de resultados 
-project_root = Path(__file__).parent.parent
+project_root = Path(__file__).parent
 xgb_results_path = project_root / "Resultados" / "XGBllr"
 modelos_xgb_path = project_root / "Modelos" / "XGBllr"
 
