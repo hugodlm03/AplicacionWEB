@@ -43,7 +43,7 @@ def load_xgb_local(client_id: str):
     if not m:
         raise ValueError(f"client_id inválido: {client_id}")
     num = m.group(0)
-    path = XGB_MODELS_PATH / "Locales" / "trees" / f"tree_client_{num}_r0.json"
+    path = XGB_MODELS_PATH / "Locales" / "trees" / f"tree_agg_client_27_r68.json"
     bst  = xgb.Booster()
     bst.load_model(str(path))
     return bst
@@ -126,14 +126,10 @@ if st.session_state.rf_sample is not None:
                 preds = {
                     # Random Forest
                     "RF Ensemble Local":       rf_l.predict(X_rf)[0],
-                    "RF 1 Árbol Local":        rf_l.estimators_[0].predict(X_rf)[0],
                     "RF Ensemble Global":      rf_g.predict(X_rf)[0],
-                    "RF 1 Árbol Global":       rf_g.estimators_[0].predict(X_rf)[0],
                     # XGBoost
                     "XGB Ensemble Local":      xgb_l.predict(dmat)[0],
-                    "XGB 1 Árbol Local":       xgb_l.predict(dmat, iteration_range=(0,1))[0],
                     "XGB Ensemble Global":     xgb_g.predict(dmat)[0],
-                    "XGB 1 Árbol Global":      xgb_g.predict(dmat, iteration_range=(0,1))[0],
                 }
                 st.session_state.predictions = preds
             except Exception as e:
@@ -148,17 +144,13 @@ if st.session_state.predictions:
         st.subheader("🔧 Random Forest")
         for label in [
             "RF Ensemble Local",
-            "RF 1 Árbol Local",
             "RF Ensemble Global",
-            "RF 1 Árbol Global",
         ]:
             st.metric(label, f"{preds[label]:.2f}")
     with col2:
         st.subheader("🌲 XGBoost")
         for label in [
             "XGB Ensemble Local",
-            "XGB 1 Árbol Local",
             "XGB Ensemble Global",
-            "XGB 1 Árbol Global",
         ]:
             st.metric(label, f"{preds[label]:.2f}")
